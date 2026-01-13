@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { getSessionUser } from "@/lib/session";
 
 type Ctx = { params: Promise<{ id: string }> };
 
-export async function DELETE(req: Request, ctx: Ctx) {
-  const who = req.headers.get("x-user");
+export async function DELETE(_req: Request, ctx: Ctx) {
+  const who =await getSessionUser();
   if (who !== "admin") {
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
   }

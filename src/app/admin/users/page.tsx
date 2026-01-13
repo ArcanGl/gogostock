@@ -13,6 +13,9 @@ export default function AdminUsersPage() {
 
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pwOpen, setPwOpen] = useState(false);
+  const [pwUser, setPwUser] = useState<UserRow | null>(null);
+  const [pwValue, setPwValue] = useState("");
 
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -23,19 +26,26 @@ export default function AdminUsersPage() {
   const [deleteTarget, setDeleteTarget] = useState<UserRow | null>(null);
 
   useEffect(() => {
-    const auth = storage.getAuth();
-    if (!auth?.username) {
+  (async () => {
+    const res = await fetch("/api/me", { cache: "no-store" });
+
+    if (!res.ok) {
       router.push("/");
       return;
     }
-    if (auth.username !== "admin") {
+
+    const data = await res.json();
+    if (data.username !== "admin") {
       router.push("/stock");
       return;
     }
-    setMe(auth.username);
+
+    setMe(data.username);
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
+
 
   async function load() {
     setLoading(true);
@@ -178,6 +188,12 @@ export default function AdminUsersPage() {
                     <td className="p-3 font-medium">{u.username}</td>
                     <td className="p-3">{new Date(u.createdAt).toLocaleString()}</td>
                     <td className="p-3">
+                      <button
+                        onClick={() => { setPwUser(u); setPwValue(""); setPwOpen(true); }}
+                        className="rounded-lg border px-3 py-1.5 text-xs hover:bg-gray-50"
+                      >
+                        Şifre Değiştir
+                      </button>
                       <button
                         onClick={() => askDelete(u)}
                         className="rounded-lg border px-3 py-1.5 text-xs hover:bg-red-50 hover:border-red-200 hover:text-red-700 disabled:opacity-40"

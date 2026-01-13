@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { getSessionUser } from "@/lib/session";
 
-export async function GET(req: Request) {
-  const who = req.headers.get("x-user");
+export async function GET() {
+  const who = await getSessionUser();
+
   if (who !== "admin") {
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
   }

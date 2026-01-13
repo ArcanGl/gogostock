@@ -1,9 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { getSessionUser } from "@/lib/session";
 
 export async function POST(req: Request) {
-  const who = req.headers.get("x-user");
+  const who = await getSessionUser();
   if (who !== "admin") {
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
   }
@@ -22,11 +23,7 @@ export async function POST(req: Request) {
   const passwordHash = await bcrypt.hash(password, 10);
 
   const created = await prisma.user.create({
-    data: {
-      username,
-      passwordHash,
-      createdAt: BigInt(Date.now()),
-    },
+    data: { username, passwordHash, createdAt: BigInt(Date.now()) },
     select: { id: true, username: true, createdAt: true },
   });
 

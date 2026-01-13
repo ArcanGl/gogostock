@@ -33,15 +33,21 @@ export default function StockPage() {
 
   // auth + initial load
   useEffect(() => {
-    const auth = storage.getAuth();
-    if (!auth?.username) {
+  (async () => {
+    const res = await fetch("/api/me", { cache: "no-store" });
+
+    if (!res.ok) {
       router.push("/");
       return;
     }
-    setUsername(auth.username);
+
+    const data = await res.json();
+    setUsername(data.username);
     loadProducts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
+
 
   async function loadProducts() {
     setLoading(true);
@@ -169,10 +175,11 @@ export default function StockPage() {
     setDeleteProduct(null);
   }
 
-  function logout() {
-    storage.clearAuth();
-    router.push("/");
+  async function logout() {
+  await fetch("/api/auth/logout", { method: "POST" });
+  router.push("/");
   }
+
 
   return (
     <div className="min-h-screen bg-gray-50">

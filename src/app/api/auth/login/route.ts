@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { setSession } from "@/lib/session";
 
 export async function POST(req: Request) {
   const { username, password } = await req.json();
@@ -18,6 +19,9 @@ export async function POST(req: Request) {
   if (!ok) {
     return NextResponse.json({ message: "Hatalı kullanıcı adı veya şifre" }, { status: 401 });
   }
+
+  // ✅ Cookie session
+  await setSession(user.username);
 
   return NextResponse.json({ ok: true, username: user.username });
 }
