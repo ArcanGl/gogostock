@@ -7,14 +7,15 @@ function toJsonProduct(p: any) {
     createdAt: typeof p.createdAt === "bigint" ? Number(p.createdAt) : p.createdAt,
   };
 }
+
 function pickProductUpdate(body: any) {
   return {
     images: Array.isArray(body.images) ? body.images.map(String) : [],
-    type: String(body.type ?? ""),
-    name: String(body.name ?? ""),
-    code: String(body.code ?? ""),
+    productType: String(body.productType ?? ""),
+    productName: String(body.productName ?? ""),
+    productCode: String(body.productCode ?? ""),
     barcode: body.barcode ? String(body.barcode) : null,
-    stock: Number(body.stock ?? 0),
+    stockQuantity: Number(body.stockQuantity ?? 0),
     arrivalDate: String(body.arrivalDate ?? ""),
     chinaBuyPrice: Number(body.chinaBuyPrice ?? 0),
     chinaBuyCurrency: String(body.chinaBuyCurrency ?? "USD"),
@@ -32,7 +33,7 @@ export async function PUT(req: Request, ctx: Ctx) {
 
   const updated = await prisma.product.update({
     where: { id },
-    data: pickProductUpdate(body),
+    data: pickProductUpdate(body), // ✅ createdAt vs yok
   });
 
   return NextResponse.json(toJsonProduct(updated));
@@ -40,8 +41,6 @@ export async function PUT(req: Request, ctx: Ctx) {
 
 export async function DELETE(_req: Request, ctx: Ctx) {
   const { id } = await ctx.params;
-
   await prisma.product.delete({ where: { id } });
-
   return NextResponse.json({ ok: true });
 }
