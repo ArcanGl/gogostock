@@ -17,7 +17,7 @@ function pickProduct(body: any) {
     trPrice: body.trPrice === "" || body.trPrice == null ? null : Number(body.trPrice),
     salePrice: body.salePrice === "" || body.salePrice == null ? null : Number(body.salePrice),
     freightPrice: body.freightPrice === "" || body.freightPrice == null ? null : Number(body.freightPrice),
-    createdAt : Date.now(),
+   
     
 }}
 
