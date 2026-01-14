@@ -3,13 +3,6 @@ export const runtime = "nodejs";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-function toJsonProduct(p: any) {
-  return {
-    ...p,
-    createdAt: typeof p.createdAt === "bigint" ? Number(p.createdAt) : p.createdAt,
-  };
-}
-
 function pickProductUpdate(body: any) {
   return {
     images: Array.isArray(body.images) ? body.images.map(String) : [],
@@ -36,10 +29,10 @@ export async function PUT(req: Request, ctx: Ctx) {
 
     const updated = await prisma.product.update({
       where: { id },
-      data: pickProductUpdate(body),
+      data: pickProductUpdate(body) as any,
     });
 
-    return NextResponse.json(toJsonProduct(updated));
+    return NextResponse.json(updated);
   } catch (e: any) {
     return NextResponse.json(
       { message: "Update failed", error: String(e?.message ?? e) },

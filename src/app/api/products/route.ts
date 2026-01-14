@@ -2,12 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
-function toJsonProduct(p: any) {
-  return {
-    ...p,
-    createdAt: typeof p.createdAt === "bigint" ? Number(p.createdAt) : p.createdAt,
-  };
-}
 
 function pickProduct(body: any) {
   return {
@@ -30,7 +24,7 @@ function pickProduct(body: any) {
 export async function GET() {
   try {
     const items = await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
-    return NextResponse.json(items.map(toJsonProduct));
+    return NextResponse.json(items);
   } catch (e: any) {
     return NextResponse.json(
       { message: "Get failed", error: String(e?.message ?? e) },
@@ -42,8 +36,8 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const created = await prisma.product.create({ data: pickProduct(body) });
-    return NextResponse.json(toJsonProduct(created));
+    const created = await prisma.product.create({ data: pickProduct(body) as any });
+    return NextResponse.json(created);
   } catch (e: any) {
     return NextResponse.json(
       { message: "Create failed", error: String(e?.message ?? e) },
