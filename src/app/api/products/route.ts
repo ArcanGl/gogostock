@@ -10,7 +10,7 @@ function pickProduct(body: any) {
     productName: String(body.productName ?? ""),
     productCode: String(body.productCode ?? ""),
     barcode: body.barcode ? String(body.barcode) : null,
-    stockQuantity: Number(body.stock ?? 0),
+    stockQuantity: Number(body.stockQuantity ?? 0),
     arrivalDate: String(body.arrivalDate ?? ""),
     chinaBuyPrice: Number(body.chinaBuyPrice ?? 0),
     chinaBuyCurrency: String(body.chinaBuyCurrency ?? "USD"),
@@ -18,7 +18,6 @@ function pickProduct(body: any) {
     salePrice: body.salePrice === "" || body.salePrice == null ? null : Number(body.salePrice),
     freightPrice: body.freightPrice === "" || body.freightPrice == null ? null : Number(body.freightPrice),
    
-    
 }}
 
 export async function GET() {
