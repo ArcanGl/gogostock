@@ -23,9 +23,9 @@ function pickProduct(body: any) {
     trPrice: body.trPrice === "" || body.trPrice == null ? null : Number(body.trPrice),
     salePrice: body.salePrice === "" || body.salePrice == null ? null : Number(body.salePrice),
     freightPrice: body.freightPrice === "" || body.freightPrice == null ? null : Number(body.freightPrice),
-    createdAt: BigInt(Date.now()),
-  };
-}
+    createdAt : Date.now(),
+    
+}}
 
 export async function GET() {
   try {
