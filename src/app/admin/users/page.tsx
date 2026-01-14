@@ -230,6 +230,79 @@ export default function AdminUsersPage() {
           setDeleteTarget(null);
         }}
       />
+      {pwOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-4 shadow-xl">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Şifre Değiştir</h3>
+              <button
+                onClick={() => setPwOpen(false)}
+                className="rounded-lg px-2 text-xl leading-none hover:bg-gray-100"
+                aria-label="Kapat"
+              >
+                ×
+              </button>
+            </div>
+
+            <p className="mt-2 text-sm text-gray-600">
+              Kullanıcı: <span className="font-medium">{pwUser?.username}</span>
+            </p>
+
+            <input
+              type="password"
+              value={pwValue}
+              onChange={(e) => setPwValue(e.target.value)}
+              placeholder="Yeni şifre (min 6)"
+              className="mt-3 w-full rounded-xl border px-3 py-2 text-sm"
+            />
+
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setPwOpen(false)}
+                className="rounded-xl border px-4 py-2 text-sm hover:bg-gray-50"
+              >
+                İptal
+              </button>
+
+              <button
+                onClick={async () => {
+                  setErr(null);
+                  setOkMsg(null);
+
+                  if (!pwUser) return;
+                  if (pwValue.trim().length < 6) {
+                    setErr("Yeni şifre en az 6 karakter olmalı.");
+                    return;
+                  }
+
+                  const res = await fetch(`/api/users/${pwUser.id}/password`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ newPassword: pwValue.trim() }),
+                  });
+
+                  if (!res.ok) {
+                    const d = await res.json().catch(() => ({}));
+                    setErr(d?.message ?? "Şifre değiştirilemedi.");
+                    return;
+                  }
+
+                  setOkMsg("Şifre güncellendi.");
+                  setPwOpen(false);
+                  setPwUser(null);
+                  setPwValue("");
+                }}
+                className="rounded-xl bg-black px-4 py-2 text-sm text-white hover:bg-black/90"
+              >
+                Kaydet
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
+
     </div>
+    
   );
+  
 }
