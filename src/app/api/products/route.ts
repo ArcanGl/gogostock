@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
 function toJsonProduct(p: any) {
   return {
     ...p,
@@ -27,12 +28,26 @@ function pickProduct(body: any) {
 }
 
 export async function GET() {
-  const items = await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
-  return NextResponse.json(items.map(toJsonProduct));
+  try {
+    const items = await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
+    return NextResponse.json(items.map(toJsonProduct));
+  } catch (e: any) {
+    return NextResponse.json(
+      { message: "Get failed", error: String(e?.message ?? e) },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const created = await prisma.product.create({ data: pickProduct(body) });
-  return NextResponse.json(toJsonProduct(created));
+  try {
+    const body = await req.json();
+    const created = await prisma.product.create({ data: pickProduct(body) });
+    return NextResponse.json(toJsonProduct(created));
+  } catch (e: any) {
+    return NextResponse.json(
+      { message: "Create failed", error: String(e?.message ?? e) },
+      { status: 500 }
+    );
+  }
 }

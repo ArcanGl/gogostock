@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -28,19 +30,33 @@ function pickProductUpdate(body: any) {
 type Ctx = { params: Promise<{ id: string }> };
 
 export async function PUT(req: Request, ctx: Ctx) {
-  const { id } = await ctx.params;
-  const body = await req.json();
+  try {
+    const { id } = await ctx.params;
+    const body = await req.json();
 
-  const updated = await prisma.product.update({
-    where: { id },
-    data: pickProductUpdate(body), // ✅ createdAt vs yok
-  });
+    const updated = await prisma.product.update({
+      where: { id },
+      data: pickProductUpdate(body),
+    });
 
-  return NextResponse.json(toJsonProduct(updated));
+    return NextResponse.json(toJsonProduct(updated));
+  } catch (e: any) {
+    return NextResponse.json(
+      { message: "Update failed", error: String(e?.message ?? e) },
+      { status: 500 }
+    );
+  }
 }
 
 export async function DELETE(_req: Request, ctx: Ctx) {
-  const { id } = await ctx.params;
-  await prisma.product.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
+  try {
+    const { id } = await ctx.params;
+    await prisma.product.delete({ where: { id } });
+    return NextResponse.json({ ok: true });
+  } catch (e: any) {
+    return NextResponse.json(
+      { message: "Delete failed", error: String(e?.message ?? e) },
+      { status: 500 }
+    );
+  }
 }

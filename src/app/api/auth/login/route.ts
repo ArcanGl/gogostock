@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { setSession } from "@/lib/session";
-
+export const runtime = "nodejs";
 export async function POST(req: Request) {
   const { username, password } = await req.json();
 

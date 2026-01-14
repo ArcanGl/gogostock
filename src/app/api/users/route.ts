@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/session";
 
+export const runtime = "nodejs";
 export async function GET() {
   const who = await getSessionUser();
 

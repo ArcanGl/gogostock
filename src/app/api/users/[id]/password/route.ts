@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 
 type Ctx = { params: Promise<{ id: string }> };
-
+export const runtime = "nodejs";
 export async function POST(req: Request, ctx: Ctx) {
   const who = await getSessionUser();
   if (who !== "admin") {

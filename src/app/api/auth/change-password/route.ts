@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 
+export const runtime = "nodejs";
+
 export async function POST(req: Request) {
   const username = await getSessionUser();
   if (!username) {
